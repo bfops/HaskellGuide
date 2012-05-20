@@ -62,8 +62,8 @@ Because of this, functions can be partially applied, i.e.
 
 Operators can also be partially applied, using parentheses:
 
-> sub1 :: Int -> Int
-> sub1 = (-1)
+> double :: Int -> Int
+> double = (*2)
 
 Lambdas can also have several parameters:
 
@@ -119,13 +119,13 @@ Function definitions also support pattern-matching against specific parameter va
 
 (Bonus points for identifying how `fib` and `fib2` differ in behavior)
 
-Pattern-matching also works on lists and tuples:
-
-> getHead :: [a] -> a
-> getHead (x:_) = x
+Pattern-matching also works on tuples and lists:
 
 > getFst :: (a, b, c) -> a
 > getFst (x, _, _) = x
+
+> getHead :: [a] -> a
+> getHead (x:_) = x
 
 It would be a big mistake to write:
 
