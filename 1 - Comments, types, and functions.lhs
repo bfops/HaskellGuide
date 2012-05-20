@@ -100,4 +100,5 @@ Function definitions also support pattern-matching against specific parameter va
 > fib2 1 = 1
 > fib2 n = fib (n - 1) + fib (n - 2)
 
+Patterns are matched in top-down order, matching the first one possible.
 (Bonus points for identifying how `fib` and `fib2` differ in behavior)
