@@ -1,5 +1,5 @@
-All the guide files are literate Haskell files (.lhs instead of .hs), where you have special characters to denote code,
-instead of special characters to denote comments.
+All the guide files are literate Haskell files (`.lhs` instead of `.hs`), where `>` denotes the beginning of a line of code,
+and anything else is a comment. Convention uses `<` to mean code that shouldn't be actually compiled.
 
 You can load these files through ghci and play with any of the functions given.
 

@@ -91,6 +91,10 @@ Types can be "renamed" using the `type` keyword:
 > xs = [1, 2, 3]
 > ys = xs
 
+In fact, `String` is defined as:
+
+< type String = [Char]
+
 To "copy" a type, but keep it distinct from the original, we can use the `newtype` keyword:
 
 > newtype IntList = IntList [Int]
