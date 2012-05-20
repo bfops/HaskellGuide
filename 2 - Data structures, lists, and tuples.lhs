@@ -1,3 +1,5 @@
+> import Prelude hiding (String)
+
 Haskell's data structures are similar to C's, in that they just wrap some values.
 `struct MyStruct { int x, y; char c }` becomes
 
@@ -12,6 +14,11 @@ To create an object of this data structure:
 
 > data MyUnion = MyInt Int
 >              | MyDouble Double
+
+`MyInt` and `MyDouble` are the constructors of `MyUnion`.
+All constructors of a type can be exported at once using `..`:
+
+< module MyModule ( MyUnion (..) ) where
 
 > myIntObj, myDoubleObj :: MyUnion
 > myIntObj = MyInt 1
@@ -93,7 +100,7 @@ Types can be "renamed" using the `type` keyword:
 
 In fact, `String` is defined as:
 
-< type String = [Char]
+> type String = [Char]
 
 To "copy" a type, but keep it distinct from the original, we can use the `newtype` keyword:
 

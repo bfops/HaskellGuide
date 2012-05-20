@@ -1,6 +1,3 @@
-The Haskell equivalent of C's `//` for single-line comments is `--`
-`/*` and `*/` become `{-` and `-}`
-The only big whitespace restriction is that your indentation has to be consistent for blocks of code with the same scope.
 Type signatures are specified with `::`, e.g. `int i` becomes
 
 > i :: Int

@@ -1,7 +1,9 @@
+> import Prelude hiding (Maybe (..), Functor, fmap, (++), abs)
+
 The `Maybe` data structure is defined in the Prelude (standard library) as such:
 
-< data Maybe a = Just a
-<              | Nothing
+> data Maybe a = Just a
+>              | Nothing
 
 Data structures are all well and good, but sometimes, they overlap in weird ways.
 For instance, what if I want a function to "run through" a data structure, and systematically change all type a to type b?
@@ -16,19 +18,19 @@ More generally, we want to be able to treat distinct data structures the same wa
 To deal with this, Haskell uses the notion of typeclasses.
 The "Functor" typeclass applies to data structures which support the function we want (called `fmap`).
 
-< class Functor f where
-<     fmap :: (a -> b) -> f a -> f b
+> class Functor f where
+>     fmap :: (a -> b) -> f a -> f b
 
 This means that if something would like to be considered a Functor, it needs to support the `fmap` function.
 To tell Haskell to consider something a Functor, we do this:
 
-< instance Functor Maybe where
-<     fmap _ Nothing = Nothing
-<     fmap f (Just x) = Just (f x)
+> instance Functor Maybe where
+>     fmap _ Nothing = Nothing
+>     fmap f (Just x) = Just (f x)
 
-< instance Functor [] where
-<     fmap _ [] = []
-<     fmap f (x:xs) = f x : fmap f xs -- This is identical to the `map` function for lists.
+> instance Functor [] where
+>     fmap _ [] = []
+>     fmap f (x:xs) = f x : fmap f xs -- This is identical to the `map` function for lists.
 
 The `fmap` function works like any other:
 
@@ -68,10 +70,10 @@ The `pure` function makes something into an Applicative object:
 >     (Just f) <*> (Just x) = Just (f x)
 >     _ <*> _ = Nothing
 
-< -- append
-< (++) :: [a] -> [a] -> [a]
-< (x:xs) ++ ys = x : (xs ++ ys)
-< [] ++ ys = ys
+> -- append
+> (++) :: [a] -> [a] -> [a]
+> (x:xs) ++ ys = x : (xs ++ ys)
+> [] ++ ys = ys
 
 > instance Applicative [] where
 >     pure x = [x]
@@ -80,11 +82,11 @@ The `pure` function makes something into an Applicative object:
 
 It becomes easier to use once you see it in combination with `<$>`:
 
-< -- absolute value
-< abs :: Int -> Int
-< abs x = if x < 0
-<         then negate x
-<         else x
+> -- absolute value
+> abs :: Int -> Int
+> abs x = if x < 0
+>         then negate x
+>         else x
 
 > highScoreDiff :: Maybe Int -> Maybe Int -> Maybe Int
 > highScoreDiff score1 score2 = diff <$> score1 <*> score2
