@@ -6,18 +6,18 @@ and anything else is a comment. Convention uses `<` to mean code that shouldn't 
 In normal Haskell files (`.hs`), comments are `--` for C's `//` comments, and `{-` and `-}` for C's `/*` and `*/` comments.
 Whitespace restrictions are pretty minimal, as long as blocks of code in the same scope have consistent indentation.
 
-You can load these files through ghci and play with any of the functions given.
+You can load Haskell files through ghci and play with any of the functions given.
 
     ghci
     > :load [file ..]
 
-You can also create your own .hs or .lhs files and compile them in GHC with minimal difficulty:
+You can also create your own `.hs` or `.lhs` files and compile them in GHC with minimal difficulty:
 
     ghc [file ..]
 
 # Modules #
 
-Programs in Haskell can be divided into modules, which are separate .hs or .lhs files.
+Programs in Haskell can be divided into modules, which are separate `.hs` or `.lhs` files.
 A module usually starts with something like:
 
     module MyModule where
@@ -51,14 +51,16 @@ We can optionally shorten them with:
 
 Sometimes, multiple modules define the same name. If this happens, we can specify which one we mean by "qualifying" with the module name:
 
-    draw -- error! Did you mean Games.Cards.Deck.draw, or Wrappers.Graphics.MyModule.draw?
-    Deck.draw -- Much better
-    Wrappers.Graphics.MyModule.draw -- also great
+    myDraw = draw -- error! Did you mean Games.Cards.Deck.draw, or Wrappers.Graphics.MyModule.draw?
+
+    myDraw = Deck.draw -- Much better
+    gDraw = Wrappers.Graphics.MyModule.draw -- also great
 
 We can force all references to a certain module to be qualified using the `qualified` keyword:
 
     import qualified Wrappers.Graphics.MyModule as G
-    draw -- Clearly, Games.Cards.Deck.draw
-    G.draw -- Graphics drawing
+
+    myDraw = draw -- Clearly, Games.Cards.Deck.draw
+    gDraw = G.draw -- Graphics drawing
 
 Future lessons may start with a Prelude import (part of the standard library) hiding some stuff, so we can rewrite it later.
