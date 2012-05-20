@@ -82,23 +82,6 @@ Similarly, operators can be made into regular functions by partially applying wi
 
 Any function whose name is completely symbols is assumed to be an operator.
 
-Lists can be constructed using the cons operator `:`. The empty list is `[]`.
-
-> list1 = 1 : []
-> list21 = 2 : list1
-> list12 = 1 : 2 : []
-
-Haskell provides us a short form for lists:
-
-> list123 = [1, 2, 3]
-
-A similar short form exists for tuples:
-
-> myTuple :: (Int, Char, String)
-> myTuple = (0, '0', "0")
-
-`String` is actually just defined as `[Char]`
-
 Function parameters can be completely ignored with `_`.
 If you don't use a parameter anywhere in a function, you should usually replace it with `_`, or you may get compiler warnings.
 
@@ -118,26 +101,3 @@ Function definitions also support pattern-matching against specific parameter va
 > fib2 n = fib (n - 1) + fib (n - 2)
 
 (Bonus points for identifying how `fib` and `fib2` differ in behavior)
-
-Pattern-matching also works on tuples and lists:
-
-> getFst :: (a, b, c) -> a
-> getFst (x, _, _) = x
-
-> getHead :: [a] -> a
-> getHead (x:_) = x
-
-It would be a big mistake to write:
-
-< getHead [x:_] = x
-
-This is pattern-matching against a list with one element, and that element is a list whose head becomes `x`.
-That's not what you wanted.
-
-Compilers may generate warnings if your pattern-matches don't cover all your bases.
-Notice above, that if I call `getHead` with the empty list, it doesn't have a definition to cover that.
-
-> getHead [] = error "You're doing it wrong"
-
-Much better.
-
