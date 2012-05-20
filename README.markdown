@@ -61,4 +61,4 @@ We can force all references to a certain module to be qualified using the `quali
 < draw -- Clearly, Games.Cards.Deck.draw
 < G.draw -- Graphics drawing
 
-Future lessons may start with a Prelude import (the standard library) hiding some stuff, so we can rewrite it later.
+Future lessons may start with a Prelude import (part of the standard library) hiding some stuff, so we can rewrite it later.
