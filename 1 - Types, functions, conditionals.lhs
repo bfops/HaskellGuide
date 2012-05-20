@@ -42,30 +42,30 @@ And called like this:
 > three :: Int
 > three = add 1 2
 
-This is because the `->` operator is right-associative, and function application is left-associative, i.e. the example becomes
+This is because the `->` operator is right-associative, and function application is left-associative, so the compiler sees `add` as:
 
 < add :: Int -> (Int -> Int)
 < add x = \y -> x + y
 
 < three = (add 1) 2
 
-Because of this, functions can be partially applied, i.e.
+Lambdas can also be written as though they have several parameters:
 
-> add1 :: Int -> Int
-> add1 = add 1
+> sub :: Int -> Int -> Int
+> sub = \x y -> x - y
+
+Because every function only has one parameter, we can "partially apply" functions:
+
+> increment :: Int -> Int
+> increment = add 1
 
 > two :: Int
-> two = add1 1
+> two = increment 1
 
 Operators can also be partially applied, using parentheses:
 
 > double :: Int -> Int
 > double = (*2)
-
-Lambdas can also have several parameters:
-
-> sub :: Int -> Int -> Int
-> sub = \x y -> x - y
 
 Any function can be made infix (i.e. usable like an operator) by putting `` around it:
 
