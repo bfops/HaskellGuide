@@ -82,3 +82,22 @@ This is equivalent to
 < c (MyRecord _ _ x) = x
 
 This is especially useful if you have a lot of similarly-typed fields in your data structure.
+
+Types can be "renamed" using the `type` keyword:
+
+> type Ints = [Int]
+> xs :: Ints
+> ys :: [Int]
+> xs = [1, 2, 3]
+> ys = xs
+
+To "copy" a type, but keep it distinct from the original, we can use the `newtype` keyword:
+
+> newtype IntList = IntList [Int]
+> getList :: IntList -> [Int]
+> getList (IntList l) = l
+
+> zs :: IntList
+> zs = IntList xs
+> xs' :: Ints
+> xs' = getList zs
