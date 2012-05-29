@@ -2,7 +2,7 @@ Type signatures are specified with `::`, e.g. `int i` becomes
 
 > i :: Int
 
-Note that in Haskell, this will yield a compile-time error unless you also have a line initializing/defining `x` somewhere.
+Note that in Haskell, this will yield a compile-time error unless you also have a line initializing/defining `i` somewhere.
 
 > i = 5
 
