@@ -14,18 +14,21 @@ All types in Haskell start with Uppercase letters, and all values start with low
 Some of the available types are Int, Integer, Char, String, Float, Double. These are all like their C equivalents;
 Integer is for arbitrary-sized integers.
 
-Function type signatures use the `->` operator:
+Conditionals have the form `if b then t else f`
+
+> axiom = if True then "Truth lives!" else "Wait, what just happened?"
+
+Function types use the `->` operator:
 
 > -- fib n = nth fibonacci number; fib 0 = 0, fib 1 = 1
 > fib :: Int -> Int
 
-Conditionals have the form `if b then t else f`
+`\x -> ..` is a one-parameter function, whose parameter is named `x`, and whose body is `..`
 
 > fib = \n -> if n <= 1
 >             then n
 >             else fib (n - 1) + fib (n - 2)
 
-`\x -> ..` is a one-parameter lambda, whose parameter is named `x`, and whose body is `..`
 Haskell has support for writing it like this:
 
 < fib n = if n <= 1
