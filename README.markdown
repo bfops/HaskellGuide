@@ -3,7 +3,7 @@
 All the guide files are literate Haskell files (`.lhs` instead of `.hs`), where `>` denotes the beginning of a line of code,
 and anything else is a comment. Convention uses `<` to mean code that shouldn't be actually compiled.
 
-In normal Haskell files (`.hs`), comments are `--` for C's `//` comments, and `{-` and `-}` for C's `/*` and `*/` comments.
+In normal Haskell files (`.hs`), comments are: `--` as an equivalent for C/C++'s `//` comments, and `{-` and `-}` for C's `/*` and `*/` comments.
 Whitespace restrictions are pretty minimal, as long as blocks of code in the same scope have consistent indentation.
 
 You can load Haskell files through ghci and play with any of the functions given.
