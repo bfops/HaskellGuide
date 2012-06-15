@@ -41,7 +41,7 @@ The `fmap` function works like any other:
 > is = [1, 2, 3]
 > ds = fmap realToFrac is -- `realToFrac` converts a real number to a fractional one
 
-> highScore :: Maybe Double
+> highScore :: Maybe Double -- A score is Nothing if nobody's played
 > roundedHighScore :: Maybe Int
 > highScore = Just 123.4
 > roundedHighScore = fmap floor highScore
