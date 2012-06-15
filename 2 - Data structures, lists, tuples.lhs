@@ -1,7 +1,7 @@
 > import Prelude hiding (String)
 
 Haskell's data structures are similar to C's, in that they just wrap some values.
-`struct MyStruct { int x, y; char c }` becomes
+`struct MyStruct { int x, y; char c; };` becomes
 
 > data MyStruct = MyStruct Int Int Char
 
@@ -10,33 +10,37 @@ To create an object of this data structure:
 > myObj :: MyStruct
 > myObj = MyStruct 1 2 '3'
 
-`union MyUnion { int i; double d; }` can be expressed as
-
-> data MyUnion = MyInt Int
->              | MyDouble Double
-
-`MyInt` and `MyDouble` are the constructors of `MyUnion`.
-All constructors of a type can be exported at once using `..`:
-
-< module MyModule ( MyUnion (..) ) where
-
-> myIntObj, myDoubleObj :: MyUnion
-> myIntObj = MyInt 1
-> myDoubleObj = MyDouble 1.0
-
-Data structures can also be pattern-matched against:
-
-> foo :: MyUnion -> Double
-> foo (MyInt i) = realToFrac i  --realToFrac can convert Ints to Doubles
-> foo (MyDouble d) = d
-
-They can have types as parameters:
+Data structures can have types as parameters:
 
 > data Box a = Box a
 > box :: Box Int
 > box = Box 5
 
-They can also be recursive:
+Sometimes we want to express data which can be in one of several distinct states.
+Consider computations which may or may not result in an error: they might give a value of the type you expected, or give you an error.
+(C often handles this with "special" values which represent errors, like NULL pointers).
+
+> data ErrorVal a = Value a
+>                 | Error String -- ^ What error?
+
+> workingComputation :: ErrorVal Int
+> workingComputation = Value 5
+
+> failedComputation :: ErrorVal Int
+> failedComputation = Error "Divide by zero"
+
+`Value` and `Error` are the "constructors" of `ErrorVal`: functions which are called to create something of type `ErrorVal`.
+Some types may have lots of constructors; if we want to export them, it saves typing to export them all at once using the literal `..`:
+
+< module MyModule ( ErrorVal (..) ) where
+
+Data structures can also be pattern-matched against:
+
+> wasSuccessful :: ErrorVal a -> Bool
+> wasSuccessful (Value _) = True
+> wasSuccessful (Error _) = False
+
+Data definitions may refer to themselves recursively:
 
 > data List a = Empty
 >             | Cons a (List a)
