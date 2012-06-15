@@ -29,8 +29,10 @@ Consider computations which may or may not result in an error: they might give a
 > failedComputation :: ErrorVal Int
 > failedComputation = Error "Divide by zero"
 
-`Value` and `Error` are the "constructors" of `ErrorVal`: functions which are called to create something of type `ErrorVal`.
-Some types may have lots of constructors; if we want to export them, it saves typing to export them all at once using the literal `..`:
+`Value` and `Error` are the "constructors" of `ErrorVal`:
+functions which are called to create something of type `ErrorVal`.
+Some types may have lots of constructors; if we want to export them,
+it saves typing to export them all at once using the literal `..`:
 
 < module MyModule ( ErrorVal (..) ) where
 
