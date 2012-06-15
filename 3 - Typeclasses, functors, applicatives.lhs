@@ -5,17 +5,18 @@ The `Maybe` data structure is defined in the Prelude (standard library) as such:
 > data Maybe a = Just a
 >              | Nothing
 
-Data structures are all well and good, but sometimes, they overlap in weird ways.
-For instance, what if I want a function to "run through" a data structure, and systematically change all type a to type b?
+Data structures are all well and good, but sometimes, we want a function to work on a bunch of different data structures.
+For instance, what if I want a function to "run through" a data structure.
+and systematically change all type `a` to type `b`?
 
 < -- f has two parameters: a "transformation" function, and a data structure on which to run it.
-< f :: (a -> b) -> D a -> D b
+< f :: (a -> b) -> DataStructure a -> DataStructure b
 < f t d = ???
 
 There's no tool in our toolbox yet to write this.
-More generally, we want to be able to treat distinct data structures the same way in certain contexts.
+We want to be able to treat distinct data structures the same way, in certain contexts.
 
-To deal with this, Haskell uses the notion of typeclasses.
+To deal with this, Haskell uses the notion of typeclasses:
 The "Functor" typeclass applies to data structures which support the function we want (called `fmap`).
 
 > class Functor f where
@@ -36,8 +37,9 @@ The `fmap` function works like any other:
 
 > is :: [Int]
 > ds :: [Double]
+
 > is = [1, 2, 3]
-> ds = fmap realToFrac is
+> ds = fmap realToFrac is -- `realToFrac` converts a real number to a fractional one
 
 > highScore :: Maybe Double
 > roundedHighScore :: Maybe Int

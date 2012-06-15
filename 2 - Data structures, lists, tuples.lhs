@@ -23,11 +23,9 @@ Consider computations which may or may not result in an error: they might give a
 > data ErrorVal a = Value a
 >                 | Error String -- ^ What error?
 
-> workingComputation :: ErrorVal Int
-> workingComputation = Value 5
-
-> failedComputation :: ErrorVal Int
-> failedComputation = Error "Divide by zero"
+> divide :: Int -> Int -> ErrorVal Int
+> divide _ 0 = Error "Divide by zero"
+> divide x y = Value (x `div` y)
 
 `Value` and `Error` are the "constructors" of `ErrorVal`:
 functions which are called to create something of type `ErrorVal`.
@@ -52,12 +50,12 @@ Data definitions may refer to themselves recursively:
 
 Haskell has built-in support for lists like this, but `List a` is `[a]`, `Empty` is `[]`, and `Cons` is `(:)`
 
+> myList2 :: [Int]
 > myList2 = 1 : 2 : 3 : []
 
 We're also given this syntax:
 
-> myList3 = [1, 2, 3]
-> myList2, myList3 :: [Int]
+> myList3 = [1, 2, 3] :: [Int]
 
 Anonymous structs (i.e. tuples) can be constructed with a similar syntax:
 
@@ -84,12 +82,16 @@ If you're constructing large data structures, you may want to use record syntax:
 >                          , c :: Char
 >                          }
 
-This is equivalent to
+This is equivalent to definition a data structure `MyRecord`:
 
 < data MyRecord = MyRecord Int Double Char
+
+Additionally, it creates several "accessor" functions:
+
 < i :: MyRecord -> Int
 < d :: MyRecord -> Double
 < c :: MyRecord -> Char
+
 < i (MyRecord x _ _) = x
 < d (MyRecord _ x _) = x
 < c (MyRecord _ _ x) = x
@@ -117,4 +119,4 @@ To "copy" a type, but keep it distinct from the original, we can use the `newtyp
 > zs :: IntList
 > zs = IntList xs
 > xs' :: Ints
-> xs' = getList zs
+> xs' = getList zs -- equivalent to `xs`

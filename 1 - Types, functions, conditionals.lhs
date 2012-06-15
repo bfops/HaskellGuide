@@ -6,6 +6,10 @@ Note that in Haskell, this will yield a compile-time error unless you also have 
 
 > i = 5
 
+We can also specify type with an expression directly:
+
+> j = 5 :: Int
+
 Type signatures can usually be omitted, but it's good practice to include them,
 especially since they're often easier to write than the code, and help you figure out the code.
 The compiler may also generate warnings if you have top-level (i.e. global) definitions without type signatures.
