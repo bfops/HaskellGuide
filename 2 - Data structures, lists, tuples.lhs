@@ -1,6 +1,6 @@
 > import Prelude hiding (String)
 
-Haskell's data structures are similar to C's, in that they just wrap some values.
+Haskell's data structures are similar to C's, in that they just represent some group of values.
 `struct MyStruct { int x, y; char c; };` becomes
 
 > data MyStruct = MyStruct Int Int Char
