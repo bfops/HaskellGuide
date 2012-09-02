@@ -84,7 +84,7 @@ Lambdas can also be written as though they have several parameters:
 > sub :: Int -> Int -> Int
 > sub = \x y -> x - y
 
-Because every function only has one parameter, we can "partially apply" functions:
+Because every function only has one parameter, we can **partially apply** functions:
 
 > increment :: Int -> Int
 > increment = add 1

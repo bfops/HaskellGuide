@@ -1,16 +1,20 @@
 > import Prelude hiding (String)
 
-Haskell's data structures are similar to C's, in that they just represent some group of values.
-`struct MyStruct { int x, y; char c; };` becomes
+Haskell data structures are POD (plain-ol'-data) types, similar to structs in C.
+Creating a structure with one `Int` member, and one `Char` member looks like:
 
-> data MyStruct = MyStruct Int Int Char
+> data MyStruct = MakeStruct Int Char
 
-To create an object of this data structure:
+`MyStruct` is now a type, and can be used as such.
+Additionally, there is now a function (a **constructor**, to be specific)
+called `MakeStruct` which can be used to create `MyStruct`s.
 
 > myObj :: MyStruct
-> myObj = MyStruct 1 2 '3'
+> myObj = MakeStruct 1 'a'
 
-Data structures can have types as parameters:
+Note that although `MakeStruct` is a function, it begins with a capital letter - all constructors do.
+
+Datatypes can also have parameters; these parameters aren't values, but types:
 
 > data Box a = Box a
 > box :: Box Int
@@ -21,43 +25,40 @@ Consider computations which may or may not result in an error: they might give a
 (C often handles this with "special" values which represent errors, like NULL pointers).
 
 > data ErrorVal a = Value a
->                 | Error String -- ^ What error?
+>                 | Error String -- ^ Error message
 
 > divide :: Int -> Int -> ErrorVal Int
 > divide _ 0 = Error "Divide by zero"
 > divide x y = Value (x `div` y)
 
-`Value` and `Error` are the "constructors" of `ErrorVal`:
-functions which are called to create something of type `ErrorVal`.
-Some types may have lots of constructors; if we want to export them,
-it saves typing to export them all at once using the literal `..`:
+If we want to export a type, as well as *all* its constructors, we can export the type with `(..)` after it:
 
 < module MyModule ( ErrorVal (..) ) where
 
-Data structures can also be pattern-matched against:
+Like other values, data structures can be used in pattern-matching:
 
 > wasSuccessful :: ErrorVal a -> Bool
 > wasSuccessful (Value _) = True
 > wasSuccessful (Error _) = False
 
-Data definitions may refer to themselves recursively:
+Data definitions may refer to themselves:
 
 > data List a = Empty
 >             | Cons a (List a)
 
 > myList :: List Int
-> myList = Cons 1 (Cons 2 (Cons 3 Empty))
+> myList = Cons 1 (Cons 2 (Cons 3 Empty)) -- The list [1, 2, 3]
 
-Haskell has built-in support for lists like this, but `List a` is `[a]`, `Empty` is `[]`, and `Cons` is `(:)`
+Haskell has built-in lists, but we have a little special syntax instead of `List` and `Cons`.
 
 > myList2 :: [Int]
-> myList2 = 1 : 2 : 3 : []
+> myList2 = 1 : 2 : 3 : [] -- The list [1, 2, 3]
 
-We're also given this syntax:
+Haskell also gives us some shortcut syntax for creating lists from scratch:
 
 > myList3 = [1, 2, 3] :: [Int]
 
-Anonymous structs (i.e. tuples) can be constructed with a similar syntax:
+We can create **tuples** (anonymous data structures) with a similar syntax:
 
 > myTuple :: (Int, Double, Char)
 > myTuple = (1, 1.0, '1')
@@ -67,15 +68,21 @@ Both lists and tuples can be pattern-matched against, as expected:
 > getFst :: (a, b, c) -> a
 > getFst (x, _, _) = x
 
-> getHead :: [a] -> a
-> getHead (x:_) = x
+> getHead :: [a] -> ErrorVal a
+> getHead (x:_) = Value x
+> getHead [] = Error "You're doing it wrong"
+
+> is123 :: [Int] -> Bool
+> is123 [1, 2, 3] = True
 
 Compilers may warn you if your pattern-matching doesn't cover all the bases.
-In this case, calling `getHead` with the empty list will cause a runtime error, since there's no match against it. Let's fix that.
+In this case, calling `is123` with any list which isn't [1, 2, 3] will cause a runtime error.
+We can fix this by adding a case for other lists:
 
-> getHead [] = error "You're doing it wrong"
+> is123 _ = False
 
-If you're constructing large data structures, you may want to use record syntax:
+Haskell can also create accessor functions for our data types automatically.
+This is known as **record syntax**:
 
 > data MyRecord = MyRecord { i :: Int
 >                          , d :: Double
@@ -98,7 +105,7 @@ Additionally, it creates several "accessor" functions:
 
 This is especially useful if you have a lot of similarly-typed fields in your data structure.
 
-Types can be "renamed" using the `type` keyword:
+Types can be copied using the `type` keyword:
 
 > type Ints = [Int]
 > xs :: Ints
@@ -106,11 +113,11 @@ Types can be "renamed" using the `type` keyword:
 > xs = [1, 2, 3]
 > ys = xs
 
-In fact, `String` is defined as:
+Prelude actually defines the `String` type as:
 
 > type String = [Char]
 
-To "copy" a type, but keep it distinct from the original, we can use the `newtype` keyword:
+To clone" a type, but keep it distinct from the original, we can use the `newtype` keyword:
 
 > newtype IntList = IntList [Int]
 > getList :: IntList -> [Int]
@@ -120,3 +127,5 @@ To "copy" a type, but keep it distinct from the original, we can use the `newtyp
 > zs = IntList xs
 > xs' :: Ints
 > xs' = getList zs -- equivalent to `xs`
+
+Here, it would be an error to type something like `xs' = zs`, since `IntList` and `Ints` are distinct types.

@@ -7,31 +7,39 @@ The `Maybe` data structure is defined in the Prelude (standard library) as such:
 
 Data structures are all well and good, but sometimes, we want a function to work on a bunch of different data structures.
 For instance, what if I want a function to "run through" a data structure.
-and systematically change all type `a` to type `b`?
+and systematically change all type `a` values to type `b` ones? For example:
+
+> transformMaybe :: (a -> b) -> Maybe a -> Maybe b
+> transformMaybe f (Just a) = Just (f a)
+> transformMaybe _ Nothing = Nothing
+
+> transformList :: (a -> b) -> [a] -> [b]
+> transformList f (a:rest) = (f a) : transformList f rest
+> transformList _ [] = []
+
+What we really want is some generic function to work for both of these:
 
 < -- f has two parameters: a "transformation" function, and a data structure on which to run it.
 < f :: (a -> b) -> DataStructure a -> DataStructure b
 < f t d = ???
 
-There's no tool in our toolbox yet to write this.
-We want to be able to treat distinct data structures the same way, in certain contexts.
-
+There's no tool in our toolbox to write this.. yet.
 To deal with this, Haskell uses the notion of typeclasses:
 The "Functor" typeclass applies to data structures which support the function we want (called `fmap`).
 
 > class Functor f where
 >     fmap :: (a -> b) -> f a -> f b
 
-This means that if something would like to be considered a Functor, it needs to support the `fmap` function.
-To tell Haskell to consider something a Functor, we do this:
+This means that if something would like to be considered a `Functor`, it needs to support the `fmap` function.
+To tell Haskell to consider something a `Functor`, we use the `instance` keyword:
 
 > instance Functor Maybe where
->     fmap _ Nothing = Nothing
->     fmap f (Just x) = Just (f x)
+>     fmap = transformMaybe
+
+This allows `Maybe` to be considered a `Functor` whenever we want.
 
 > instance Functor [] where
->     fmap _ [] = []
->     fmap f (x:xs) = f x : fmap f xs -- This is identical to the `map` function for lists.
+>     fmap = transformList -- identical to the `map` function
 
 The `fmap` function works like any other:
 
@@ -51,21 +59,24 @@ When declaring things, we may optionally add a restriction to the typeclasses of
 > (<$>) :: Functor f => (a -> b) -> f a -> f b
 > (<$>) = fmap
 
-Typeclasses can also provide default values for functions; instances still have the option of overriding it.
-The Applicative typeclass requires that instances provide a `<*>` operator:
+This function will only be valid for a type `f` if `f` has been made an instance of `Functor`.
+
+Typeclasses don't have to just define one function; the `Applicative` typeclass defines two:
 
 > class Functor f => Applicative f where
 >     (<*>) :: f (a -> b) -> f a -> f b
-
-But there's more than that:
-
->     pure :: a -> f a
+>     pure :: a -> f a -- Create an Applicative object
 >     (<*) :: f a -> f b -> f a
 >     (*>) :: f a -> f b -> f b
+
+Typeclasses may provide default values for some functions; instances of these classes may *choose* to override the default definitions
+(usually for performance reasons), but may also provide no definition, in which case the default one will be used.
+The `Applicative` typeclass provides default definitions for `(<*)` and `(*>)`
+
 >     (<*) x y = (\a _ -> a) <$> x <*> y -- (const <$> x) <*> y
 >     (*>) x y = y <* x
 
-The `pure` function makes something into an Applicative object:
+`Maybe` and `[]` are both `Applicative`s, as well as `Functors`:
 
 > instance Applicative Maybe where
 >     pure = Just
@@ -82,7 +93,7 @@ The `pure` function makes something into an Applicative object:
 >     (f:fs) <*> xs = (f <$> xs) ++ (fs <*> xs)
 >     [] <*> _ = []
 
-It becomes easier to use once you see it in combination with `<$>`:
+`Applicative` becomes easier to understand and use once you see it in combination with `<$>`:
 
 > -- absolute value
 > abs :: Int -> Int
