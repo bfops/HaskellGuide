@@ -1,4 +1,4 @@
-> import Prelude hiding (abs, otherwise)
+> import Prelude hiding (abs, otherwise, foldr, foldl)
 
 Guards are used for functions with multiple conditionals:
 
@@ -12,6 +12,17 @@ The library defines `otherwise`:
 
 > otherwise :: Bool
 > otherwise = True
+
+Fold functions are very useful for running functions on a collection of data;
+they take an collection of data, an accumulator value, and a function which combines an element with the accumulator.
+
+> foldl :: (a -> b -> a) -> a -> [b] -> a -- Starts accumulating from the left end of the list
+> foldl _ base [] = base
+> foldl f base (x:xs) = foldl f base xs `f` x
+
+> foldr :: (a -> b -> b) -> b -> [a] -> b -- Starts accumulating from the right end of the list
+> foldr _ base [] = base
+> foldr f base (x:xs) = x `f` foldr f base xs
 
 Hoogle is your friend for searching functions, packages, and type signatures: http://www.haskell.org/hoogle/
 
