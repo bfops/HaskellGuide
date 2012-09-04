@@ -109,7 +109,7 @@ The `Applicative` typeclass provides default definitions for `(<*)` and `(*>)`
 > crossProduct xs ys = makeTuple <$> xs <*> ys
 >     where makeTuple x y = (x, y)
 
-This might be a good time to mention that `where` lets you introduce a local "sub-scope".
+Here, the `where` keyword lets you introduce a local "sub-scope".
 You can put as many functions, variables, etc. into that subscope, as long as they're all indented equally.
 
 We can also use `let`:
