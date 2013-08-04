@@ -4,7 +4,7 @@ All the guide files are literate Haskell files (`.lhs` instead of `.hs`), where 
 and anything else is a comment. Convention uses `<` to mean code that shouldn't be actually compiled.
 
 In normal Haskell files (`.hs`), comments can be constructed as follows: `--` as an equivalent for C/C++'s `//` comments,
-and `{-...-}` for C's `/*...*/` comments.
+and `{-...-}` instead of C's `/*...*/` comments.
 
 Whitespace restrictions are pretty minimal, as long as blocks of code in the same scope have consistent indentation.
 
@@ -26,7 +26,7 @@ A module usually starts with a line naming the module:
 
 This can be omitted, and the module will assume the name of the file.
 
-Usually, modules **export** some variables/functions (i.e. make them usable from other modules):
+Modules **export** some variables/functions (i.e. make them usable from other modules):
 
     module MyModule ( export1, export2, ...) where
 
@@ -37,13 +37,13 @@ To access exported items from another module, they must first be imported:
 
     import MyModule (export1)
 
+Omitting an import list will cause all of the exports the module to be imported:
+
+    import MyModule
+
 If we don't like a module's name, we can choose to rename it
 
     import MyModule as IHateYourStupidModule (export1)
-
-Omitting an import list will cause all of the items in the module to be imported:
-
-    import MyModule
 
 We can also choose to import a module, but leave little pieces out:
 
@@ -60,8 +60,11 @@ the module names look like this:
 
     module Wrappers.Graphics.MyModule
 
-Sometimes, multiple modules define the same name.
+Sometimes, multiple modules define things with the same name.
 If this happens, we can specify which one we mean by "qualifying" with the module name:
+
+    import Game.Cards.Deck as Deck
+    import Wrappers.Graphics.OpenGL
 
     myDraw = draw -- error! Did you mean Games.Cards.Deck.draw, or Wrappers.Graphics.OpenGL.draw?
 
@@ -71,12 +74,12 @@ If this happens, we can specify which one we mean by "qualifying" with the modul
 We can **require** that every use of a module's import be explicitly qualified,
 by using the `qualified` keyword on the module import:
 
-    import qualified Wrappers.Graphics.OpenGL as G
+    import Games.Cards.Deck
+    import qualified Wrappers.Graphics.OpenGL as GL
 
     myDraw = draw -- Clearly, Games.Cards.Deck.draw
-    glDraw = G.draw -- Graphics drawing
+    glDraw = GL.draw -- Graphics drawing
 
-Future lessons may start with an import of the module Prelude (part of the Haskell standard library) hiding some stuff,
-so we can rewrite it later in the file.
-
-If there's no line explicitly importing Prelude, it is implicitly added, importing everything from Prelude.
+The Prelude module (part of the standard library) is implicitly imported in Haskell modules.
+It can be explicitly imported to only include parts of it.
+Future lessons may start with an import of Prelude to hide some stuff that we plan to rewrite in the lesson.

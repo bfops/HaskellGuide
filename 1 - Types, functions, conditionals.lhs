@@ -4,11 +4,12 @@ Translating `int i` from C to Haskell looks like:
 > i :: Int
 
 In C, simply declaring an int i is good enough; lack of a definition (initialization) will work, but yield undefined results.
-In Haskell, this will yield a compile-time error unless you have a line explicitly initializing/defining `i` somewhere:
+In Haskell, this will yield a compile-time error (assuming the variable is actually used)
+unless you have a line explicitly initializing/defining `i`:
 
 > i = 5
 
-We can also specify type with an expression directly:
+We can also specify type as part of the expression:
 
 > j = 5 :: Int
 
@@ -23,35 +24,28 @@ and all values (variables and functions) have names which start with lowercase l
 Some of the types available are Int, Integer, Char, String, Float, Double.
 These are act like their C equivalents, with the addition of `Integer` for arbitrarily large integers.
 
-Conditionals take the form `if b then t else f`
-
-> message :: String
-> message = if True then "Truth lives!" else "Satan's thermometer is going to need checking"
-
-The type of a function requires use of the `->` symbol:
+The type a function involves use of the "->" symbol:
 
 > -- fib n = nth fibonacci number; fib 0 = 0, fib 1 = 1
 > fib :: Int -> Int
 
-`fib` is a variable, and just like `i` or `j`, it needs a value, albeit a value which is a function.
-To create a one-parameter function, whose parameter is named `x`, and whose body is `..`, the syntax is `\x -> ..`
-
-Function values are called **lambdas** or **anonymous** functions.
+`fib` is a variable, and just like `i` or `j`, it needs a value, albeit a value that is a function.
+To create a one-parameter anonymous (unnamed) function, whose parameter is named `x`, and whose body is `foo` the syntax is `\x -> foo`.
+Application of a function to a value doesn't require parentheses; following a function name with a value applies that function to that argument.
+(Parentheses are only used to group sub-expressions, i.e. to show order of operations)
 
 > fib = \n -> if n <= 1
 >             then n
 >             else fib (n - 1) + fib (n - 2)
 
-Note that `fib` isn't a lambda (it's not anonymous, since it's named `fib`),
-but the part after the `=` sign is.
-
-Since functions are (extremely) common in Haskell, we get to use a bit of a shorthand:
+Since function definitions are (extremely) common in Haskell, we get to use a bit of a shorthand:
 
 > fib2 n = if n <= 1
 >          then n
 >          else fib2 (n - 1) + fib2 (n - 2)
 
-In Haskell, functions can only take one parameter, so we write "multi-parameter" functions like this:
+In Haskell, all functions only take exactly parameter (it sounds weird, but just wait);
+we write "multi-parameter" functions like this:
 
 > add :: Int -> (Int -> Int)
 > add x = \y -> x + y
@@ -62,16 +56,12 @@ In Haskell, functions can only take one parameter, so we write "multi-parameter"
 Here, `add` takes a single Int, and then produces a function which will also take a single Int,
 and then produce the sum of both.
 
-Rather than thinking of `add` as a function which takes two Ints and produces an Int,
-it should be thought of as taking one Int, subsequently taking another, and then producing a value.
-
-There's shorthand here, too; Haskell will assume that functions are being applied left-to-right,
-and add in the parentheses correspondingly.
+There's shorthand here, too; function application in Haskell is left-associative:
 
 > five :: Int
 > five = add 2 3 -- the same as `(add 2) 3`
 
-There's a similar rule for the type signatures as well, this time, from right-to-left:
+Similarly, function declaration is right-associative:
 
 > addTogether :: Int -> Int -> Int -- the same as `Int -> (Int -> Int)`
 
@@ -92,17 +82,17 @@ Because every function only has one parameter, we can **partially apply** functi
 > two :: Int
 > two = increment 1 -- like (add 1) 1
 
-Operators can also be partially applied, using parentheses:
+Operators can also be partially applied, but we need explicit parentheses:
 
 > double :: Int -> Int
 > double = (* 2)
 
-Any function can be made infix (i.e. usable like an operator) by putting `` around it:
+Any function can be made **infix** (usable as an operator) by putting `` around it:
 
 > one :: Int
 > one = 3 `sub` 2
 
-Similarly, operators can be made into regular functions by partially applying with no parameters:
+Conversely, to use an operator like a regular function, we wrap it in parentheses:
 
 > mult :: Int -> Int -> Int
 > mult = (*)
@@ -115,7 +105,7 @@ If a parameter is unused in a function, you should explicitly ignore it (failing
 > always1 :: Int -> Int
 > always1 _ = 1
 
-Function type signatures can also include lowercase-starting type names to represent arbitrary types:
+Function type signatures can include lowercase-starting type names to represent arbitrary types:
 
 > identity :: a -> a
 > identity x = x

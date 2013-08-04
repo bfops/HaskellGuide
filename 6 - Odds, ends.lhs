@@ -1,5 +1,40 @@
 > import Prelude hiding (abs, otherwise, foldr, foldl)
 
+Operator precedence can be specified with `infix` keywords:
+
+> -- Right associative with precedence 4
+> infixr 4 !
+
+> -- alias for (:)
+> (!) :: a -> [a] -> [a]
+> (!) = (:)
+
+> -- Left-associative with precedence 3
+> infixl 3 !:
+
+> -- (:) with arguments flipped
+> (!:) :: [a] -> a -> [a]
+> l !: x = x ! l
+
+> -- [1, 2, 3, 4]
+> list1234 :: [Integer]
+> -- parses as ((3 ! (4 ! [])) !: 2) !: 1
+> list1234 = 3 ! 4 ! [] !: 2 !: 1
+
+> -- Precedence 5; can't be "chained" without a parse error,
+> -- since we wouldn't know whether to left- or right- associate.
+> infix 5 ><
+
+> -- Get the smaller element
+> (><) :: Integer -> Integer -> Integer
+> x >< y = if x < y
+>          then x
+>          else y
+
+> -- [1, 2, 3]
+> list123 :: [Integer]
+> list123 = 2 ! 3 >< 5 ! [] !: 1
+
 Guards are used for functions with multiple conditionals:
 
 > abs :: Int -> Int

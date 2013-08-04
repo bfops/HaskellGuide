@@ -5,9 +5,16 @@ The `Maybe` data structure is defined in the Prelude (standard library) as such:
 > data Maybe a = Just a
 >              | Nothing
 
-Data structures are all well and good, but sometimes, we want a function to work on a bunch of different data structures.
-For instance, what if I want a function to "run through" a data structure.
-and systematically change all type `a` values to type `b` ones? For example:
+This allows a type-safe way of explaining that a value might.. well, not have a value,
+similar to the use of nullptr in C++. It works like our `ErrorVal` type, only without a message.
+
+Sometimes we want to define a function that makes conceptual sense for a variety of types,
+but has to be written a little differently for each one.
+For instance, there are many different kinds of data structures that can contain values
+(list, array, heap, b-tree, etc.). What if we want to apply a function to every element,
+regardless of structure?
+
+With our current tools, we'd have to write a slightly different function for each type:
 
 > transformMaybe :: (a -> b) -> Maybe a -> Maybe b
 > transformMaybe f (Just a) = Just (f a)
@@ -17,29 +24,22 @@ and systematically change all type `a` values to type `b` ones? For example:
 > transformList f (a:rest) = (f a) : transformList f rest
 > transformList _ [] = []
 
-What we really want is some generic function to work for both of these:
-
-< -- f has two parameters: a "transformation" function, and a data structure on which to run it.
-< f :: (a -> b) -> DataStructure a -> DataStructure b
-< f t d = ???
-
-There's no tool in our toolbox to write this.. yet.
-To deal with this, Haskell uses the notion of typeclasses:
-The "Functor" typeclass applies to data structures which support the function we want (called `fmap`).
+Haskell has a notion of **typeclasses**, which act like interfaces in an object-oriented language.
+The "Functor" typeclass declares the function we want (called `fmap`):
 
 > class Functor f where
 >     fmap :: (a -> b) -> f a -> f b
 
-This means that if something would like to be considered a `Functor`, it needs to support the `fmap` function.
-To tell Haskell to consider something a `Functor`, we use the `instance` keyword:
+`f` is the thing that will inherit the `Functor` class.
+To actually "inherit" this "interface", we use the `instance` keyword:
 
 > instance Functor Maybe where
 >     fmap = transformMaybe
 
-This allows `Maybe` to be considered a `Functor` whenever we want.
-
+> -- This is not the data value the empty list; this is the list type without an element type,
+> -- much like `Maybe` is a Maybe type without an element type.
 > instance Functor [] where
->     fmap = transformList -- identical to the `map` function
+>     fmap = transformList
 
 The `fmap` function works like any other:
 
@@ -50,19 +50,25 @@ The `fmap` function works like any other:
 > ds = fmap realToFrac is -- `realToFrac` converts a real number to a fractional one
 
 > highScore :: Maybe Double -- A score is Nothing if nobody's played
-> roundedHighScore :: Maybe Int
 > highScore = Just 123.4
+
+> roundedHighScore :: Maybe Int
 > roundedHighScore = fmap floor highScore
 
-When declaring things, we may optionally add a restriction to the typeclasses of variable-type parameters:
+When declaring functions, we can require that the parameters instantiate certain typeclasses,
+by using a `=>`:
 
+> -- Exactly like fmap, but as an operator.
+> -- Now I can do things like (1 +) <$> [1, 2, 3] instead of fmap (1 +) [1, 2, 3]
 > (<$>) :: Functor f => (a -> b) -> f a -> f b
 > (<$>) = fmap
 
-This function will only be valid for a type `f` if `f` has been made an instance of `Functor`.
+Uses of this function will only be valid for a type `f` if `f` has been made an instance of `Functor`.
 
-Typeclasses don't have to just define one function; the `Applicative` typeclass defines two:
+Typeclasses don't have to just define one function:
 
+> -- Notice that making something Applicative requires that it be a Functor.
+> -- This is analogous to having an interface inherit another interface in OO languages.
 > class Functor f => Applicative f where
 >     (<*>) :: f (a -> b) -> f a -> f b
 >     pure :: a -> f a -- Create an Applicative object
@@ -73,10 +79,11 @@ Typeclasses may provide default values for some functions; instances of these cl
 (usually for performance reasons), but may also provide no definition, in which case the default one will be used.
 The `Applicative` typeclass provides default definitions for `(<*)` and `(*>)`
 
->     (<*) x y = (\a _ -> a) <$> x <*> y -- (const <$> x) <*> y
+>     -- Just take the first value
+>     (<*) x y = ((\a _ -> a) <$> x) <*> y
 >     (*>) x y = y <* x
 
-`Maybe` and `[]` are both `Applicative`s, as well as `Functors`:
+`Maybe` and `[]` are both `Applicative`s:
 
 > instance Applicative Maybe where
 >     pure = Just
@@ -88,6 +95,7 @@ The `Applicative` typeclass provides default definitions for `(<*)` and `(*>)`
 > (x:xs) ++ ys = x : (xs ++ ys)
 > [] ++ ys = ys
 
+> -- Acts like a cross-product of functions and values.
 > instance Applicative [] where
 >     pure x = [x]
 >     (f:fs) <*> xs = (f <$> xs) ++ (fs <*> xs)
@@ -102,8 +110,10 @@ The `Applicative` typeclass provides default definitions for `(<*)` and `(*>)`
 >         else x
 
 > highScoreDiff :: Maybe Int -> Maybe Int -> Maybe Int
-> highScoreDiff score1 score2 = diff <$> score1 <*> score2
+> highScoreDiff score1 score2 = (diff <$> score1) <*> score2
 >     where diff x y = abs (x - y)
+
+The `<$>` and `<*>` operators are left-associative, so the parentheses can be omitted:
 
 > crossProduct :: [a] -> [b] -> [(a, b)]
 > crossProduct xs ys = makeTuple <$> xs <*> ys
@@ -114,5 +124,5 @@ You can put as many functions, variables, etc. into that subscope, as long as th
 
 We can also use `let`:
 
-< crossProduct xs ys = let makeTuple x y = (x, y)
-<                      in makeTuple <$> xs <*> ys
+> crossProduct2 xs ys = let makeTuple x y = (x, y)
+>                       in makeTuple <$> xs <*> ys

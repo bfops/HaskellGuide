@@ -14,7 +14,8 @@ called `MakeStruct` which can be used to create `MyStruct`s.
 
 Note that although `MakeStruct` is a function, it begins with a capital letter - all constructors do.
 
-Datatypes can also have parameters; these parameters aren't values, but types:
+Datatypes can take parameters, much like functions. These are type parameters, instead of values,
+and act much like templates in C++.
 
 > data Box a = Box a
 > box :: Box Int
@@ -81,31 +82,27 @@ We can fix this by adding a case for other lists:
 
 > is123 _ = False
 
-Haskell can also create accessor functions for our data types automatically.
-This is known as **record syntax**:
+Haskell can also create accessor functions for our data types automatically:
 
 > data MyRecord = MyRecord { i :: Int
 >                          , d :: Double
 >                          , c :: Char
 >                          }
 
-This is equivalent to definition a data structure `MyRecord`:
+This is known as **record syntax**.
+This is equivalent to defining:
 
-< data MyRecord = MyRecord Int Double Char
+> data MyRecord2 = MyRecord2 Int Double Char
 
-Additionally, it creates several "accessor" functions:
+> i2 :: MyRecord2 -> Int
+> d2 :: MyRecord2 -> Double
+> c2 :: MyRecord2 -> Char
 
-< i :: MyRecord -> Int
-< d :: MyRecord -> Double
-< c :: MyRecord -> Char
+> i2 (MyRecord2 x _ _) = x
+> d2 (MyRecord2 _ x _) = x
+> c2 (MyRecord2 _ _ x) = x
 
-< i (MyRecord x _ _) = x
-< d (MyRecord _ x _) = x
-< c (MyRecord _ _ x) = x
-
-This is especially useful if you have a lot of similarly-typed fields in your data structure.
-
-Types can be copied using the `type` keyword:
+To give a type a new name, the `type` keyword can be used:
 
 > type Ints = [Int]
 > xs :: Ints
@@ -113,11 +110,11 @@ Types can be copied using the `type` keyword:
 > xs = [1, 2, 3]
 > ys = xs
 
-Prelude actually defines the `String` type as:
+Prelude defines the `String` type as:
 
 > type String = [Char]
 
-To clone" a type, but keep it distinct from the original, we can use the `newtype` keyword:
+To give a type a new name, but keep it distinct from the original, we can use `newtype`:
 
 > newtype IntList = IntList [Int]
 > getList :: IntList -> [Int]
